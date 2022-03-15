@@ -203,7 +203,7 @@ func resourceHerokuReviewAppConfigCreate(ctx context.Context, d *schema.Resource
 
 	log.Printf("[DEBUG] Enabling review apps config on pipeline %s", pipelineID)
 
-	config, enableErr := client.ReviewAppConfigEnable(ctx, pipelineID, opts)
+	_, enableErr := client.ReviewAppConfigEnable(ctx, pipelineID, opts)
 	if enableErr != nil {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
@@ -216,7 +216,10 @@ func resourceHerokuReviewAppConfigCreate(ctx context.Context, d *schema.Resource
 	log.Printf("[DEBUG] Enabled review apps config on pipeline %s", pipelineID)
 
 	// Set resource ID to the pipeline ID
-	d.SetId(config.PipelineID)
+	// Workaround for https://github.com/heroku/heroku-go/issues/60: the config
+	// response is missing the pipeline ID in Heroku client v5.4.1; fortunately
+	// we already know it.
+	d.SetId(pipelineID)
 
 	return resourceHerokuReviewAppConfigRead(ctx, d, meta)
 }
@@ -316,7 +319,10 @@ func resourceHerokuReviewAppConfigRead(ctx context.Context, d *schema.ResourceDa
 		return diags
 	}
 
-	d.Set("pipeline_id", reviewAppConfig.PipelineID)
+	// Workaround for https://github.com/heroku/heroku-go/issues/60: the config
+	// response is missing the pipeline ID in Heroku client v5.4.1; fortunately
+	// we can pull it from the ResourceData.
+	d.Set("pipeline_id", d.Id())
 	d.Set("automatic_review_apps", reviewAppConfig.AutomaticReviewApps)
 	d.Set("base_name", reviewAppConfig.BaseName)
 	d.Set("destroy_stale_apps", reviewAppConfig.DestroyStaleApps)
