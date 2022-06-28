@@ -1,6 +1,10 @@
 Terraform Provider Heroku
 =========================
 
+### This fork has been archived. We stopped using Heroku's GitHub integration during their [April 2022 security incident](https://status.heroku.com/incidents/2413). Since we're not configuring the GitHub integration anymore, we don't need the bug fix for `heroku_review_app_config` so we can move back to the original Heroku provider.
+
+--------------------
+
 [![Acceptance tests](https://github.com/heroku/terraform-provider-heroku/workflows/Acceptance/badge.svg)](https://github.com/heroku/terraform-provider-heroku/actions?query=workflow%3AAcceptance)
 
 This provider is used to configure resources supported by the [Heroku Platform API](https://devcenter.heroku.com/articles/platform-api-reference).
